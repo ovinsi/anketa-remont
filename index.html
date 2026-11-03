@@ -101,13 +101,18 @@
       <div class="key"><label>Сколько готовы тратить на продвижение в Авито в месяц?<span>Это отдельно от оплаты моей работы</span><textarea name="q21"></textarea></label></div>
       <div class="key"><label>Как будем фиксировать, что сделка закрыта?<span>Договор, аванс, общая таблица заявок</span><textarea name="q22"></textarea></label></div>
       <div class="key"><label>Когда выплачиваются 10%: с аванса, по этапам или после окончания?<textarea name="q23"></textarea></label></div>
+      <div class="key"><label>Сколько заказов в месяц хотите получать и сколько реально потянете?<textarea name="q25"></textarea></label></div>
+      <label>Какие работы для вас самые выгодные? С чего начать продвижение?<textarea name="q26"></textarea></label>
+      <label>Куда и кому передавать заявки? В какие часы вы на связи?<textarea name="q27"></textarea></label>
       <label>Что ещё важно знать?<textarea name="q24"></textarea></label>
       <label>Ваше имя и телефон / Telegram<input name="contact"></label>
     </section>
 
     <section class="send">
       <h2>Отправить ответы</h2>
-      <p>Кнопка скопирует ответы и откроет чат с Даниилом в Telegram. Там нажмите «Вставить» и отправьте.</p>
+      <p>Выберите мессенджер. Ответы скопируются автоматически: в чате с Даниилом нажмите «Вставить» и отправьте.</p>
+      <button type="button" class="primary" id="wa">Отправить в WhatsApp</button>
+      <button type="button" class="primary" id="max">Скопировать для Max</button>
       <button type="button" class="primary" id="tg">Скопировать и открыть Telegram</button>
       <button type="button" class="secondary" id="dl">Скачать ответы файлом</button>
       <div class="status" id="status"></div>
@@ -118,6 +123,8 @@
 <script>
   const KEY = 'anketa-remont-spb';
   const TG = 'https://t.me/Daniilvalo';
+  // ссылка на профиль Даниила в Max (вида https://max.ru/u/...); пусто — кнопка только копирует
+  const MAX = '';
   const form = document.getElementById('form');
   const fields = [...form.querySelectorAll('textarea, input')];
 
@@ -177,6 +184,21 @@
       ? 'Ответы скопированы. Вставьте их в чат с Даниилом и отправьте.'
       : 'Не получилось скопировать. Скачайте файл и отправьте его в Telegram.';
     window.open(TG, '_blank');
+  });
+
+  document.getElementById('wa').addEventListener('click', async () => {
+    const text = answers();
+    await copy(text);
+    status.textContent = 'Открываем WhatsApp. Если текст не подставился, он уже скопирован — вставьте его в чат.';
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  });
+
+  document.getElementById('max').addEventListener('click', async () => {
+    const ok = await copy(answers());
+    status.textContent = ok
+      ? 'Ответы скопированы. Откройте Max, чат с Даниилом, нажмите «Вставить» и отправьте.'
+      : 'Не получилось скопировать. Скачайте файл и отправьте его в Max.';
+    if (MAX) window.open(MAX, '_blank');
   });
 
   document.getElementById('dl').addEventListener('click', () => {
